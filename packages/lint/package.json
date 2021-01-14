@@ -1,5 +1,5 @@
 {
-  "name": "@fransvilhelm/mjml-sendgrid-toolkit",
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-lint",
   "version": "0.0.0",
   "repository": {
     "type": "git",
@@ -9,14 +9,11 @@
   "license": "MIT",
   "type": "module",
   "source": "./src/index.ts",
-  "main": "./dist/cli.js",
-  "exports": "./dist/cli.modern.js",
-  "module": "./dist/cli.module.js",
-  "unpkg": "./dist/cli.umd.js",
+  "main": "./dist/lint.js",
+  "exports": "./dist/lint.modern.js",
+  "module": "./dist/lint.module.js",
+  "unpkg": "./dist/lint.umd.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "mst": "./cli.js"
-  },
   "files": [
     "dist"
   ],
@@ -27,9 +24,7 @@
     "dev": "microbundle watch",
     "build": "microbundle"
   },
-  "dependencies": {
-    "@fransvilhelm/mjml-sendgrid-toolkit-lint": "0.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "microbundle": "^0.13.0"
   }
