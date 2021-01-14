@@ -1,8 +1,6 @@
-import { isAbsolute, resolve, extname } from 'path';
-import { constants } from 'fs';
-import { readFile, access } from 'fs/promises';
+import { isAbsolute, extname } from 'path';
+import { readFile } from 'fs/promises';
 import { uniqWith } from 'lodash';
-import mjml from 'mjml';
 import {
   MJMLParseError,
   components,
@@ -12,7 +10,10 @@ import {
 import MJMLParser from 'mjml-parser-xml';
 import MJMLValidator, { dependencies } from 'mjml-validator';
 import { ESLint } from 'eslint';
-import { ProjectConfig } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+import {
+  ProjectConfig,
+  prepareMjmlEnv,
+} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
 interface LintResult {
   filePath: string;
@@ -23,6 +24,8 @@ export async function lint(
   filePaths: string[],
   project: ProjectConfig,
 ): Promise<LintResult[]> {
+  await prepareMjmlEnv(project);
+
   let results: Record<string, MJMLParseError[]> = {};
 
   let pushResult = (filePath: string, ...errors: MJMLParseError[]) => {
@@ -30,16 +33,13 @@ export async function lint(
     results[filePath].push(...errors);
   };
 
-  // We need to warm-up mjml to register all built-in components
-  mjml('<mjml><mj-body></mj-body></mjml>');
-
   for (let originalPath of filePaths) {
     let filePath = isAbsolute(originalPath)
       ? originalPath
-      : resolve(project.projectRoot, originalPath);
+      : project.resolve(originalPath);
 
     try {
-      if (!(await exists(filePath))) {
+      if (!(await project.exists(filePath))) {
         throw new Error('File does not exists.');
       }
 
@@ -103,15 +103,6 @@ export async function formatLintResult(results: LintResult[]): Promise<string> {
   let output = formatter.format(reports);
 
   return output;
-}
-
-async function exists(filePath: string): Promise<boolean> {
-  try {
-    await access(filePath, constants.R_OK);
-    return true;
-  } catch (_) {
-    return false;
-  }
 }
 
 function splitErrors(
