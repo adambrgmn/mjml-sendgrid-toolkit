@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import './dist/cli.modern.js';
+require('./dist/cli.js');
