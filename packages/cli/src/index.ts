@@ -1,3 +1,7 @@
 import { lint } from '@fransvilhelm/mjml-sendgrid-toolkit-lint';
+import { getProjectConfig } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
-lint(['foo.bar']);
+(async () => {
+  let projectConfig = await getProjectConfig(process.cwd());
+  console.log(projectConfig);
+})();
