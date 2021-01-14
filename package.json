@@ -1,5 +1,5 @@
 {
-  "name": "@fransvilhelm/mjml-sendgrid-toolkit",
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-project",
   "version": "0.0.0",
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
+    "example",
     "packages/**"
   ],
   "scripts": {

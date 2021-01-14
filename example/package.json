@@ -1,0 +1,12 @@
+{
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-example",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "mst": "mst"
+  },
+  "dependencies": {
+    "@fransvilhelm/mjml-sendgrid-toolkit": "0.0.0"
+  }
+}

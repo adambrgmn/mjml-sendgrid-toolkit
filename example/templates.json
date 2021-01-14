@@ -1,0 +1,8 @@
+{
+  "templates": [
+    {
+      "name": "test-1",
+      "src": "./src/test-1/template.mjml"
+    }
+  ]
+}
