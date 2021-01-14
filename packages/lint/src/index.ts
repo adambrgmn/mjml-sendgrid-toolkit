@@ -1,7 +1,7 @@
-import { isAbsolute, resolve, join, extname } from 'path';
+import { isAbsolute, resolve, extname } from 'path';
 import { constants } from 'fs';
-import { readFile, writeFile, access } from 'fs/promises';
-import { uniqWith, isEqual } from 'lodash';
+import { readFile, access } from 'fs/promises';
+import { uniqWith } from 'lodash';
 import mjml from 'mjml';
 import {
   MJMLParseError,
@@ -23,7 +23,12 @@ export async function lint(
   filePaths: string[],
   project: ProjectConfig,
 ): Promise<LintResult[]> {
-  let results: LintResult[] = [];
+  let results: Record<string, MJMLParseError[]> = {};
+
+  let pushResult = (filePath: string, ...errors: MJMLParseError[]) => {
+    results[filePath] = results[filePath] ?? [];
+    results[filePath].push(...errors);
+  };
 
   // We need to warm-up mjml to register all built-in components
   mjml('<mjml><mj-body></mj-body></mjml>');
@@ -51,44 +56,24 @@ export async function lint(
       });
 
       if (errors.length > 0) {
-        results.push(...splitErrors(filePath, errors, tree));
+        for (let result of splitErrors(filePath, errors, tree)) {
+          pushResult(result.filePath, ...result.errors);
+        }
       }
     } catch (error) {
-      results.push({
-        filePath,
-        errors: [
-          {
-            line: 0,
-            message: error.message,
-            formattedMessage: error.message,
-            tagName: 'error',
-          },
-        ],
+      pushResult(filePath, {
+        line: 0,
+        message: error.message,
+        formattedMessage: error.message,
+        tagName: 'error',
       });
     }
   }
 
-  let grouped: LintResult[] = [];
-  for (let result of results) {
-    let existing = grouped.find((res) => res.filePath === result.filePath);
-    if (existing) {
-      existing.errors.push(...result.errors);
-    } else {
-      grouped.push(result);
-    }
-  }
-
-  for (let group of grouped) {
-    group.errors = uniqWith(group.errors, (a, b) => {
-      return (
-        a.line === b.line && a.tagName === b.tagName && a.message === b.message
-      );
-    });
-  }
-
-  await debug('group.json', JSON.stringify(grouped, null, 2));
-
-  return grouped;
+  return Object.entries(results).map(([filePath, errors]) => ({
+    filePath,
+    errors: uniqErrors(errors),
+  }));
 }
 
 export async function formatLintResult(results: LintResult[]): Promise<string> {
@@ -127,10 +112,6 @@ async function exists(filePath: string): Promise<boolean> {
   } catch (_) {
     return false;
   }
-}
-
-async function debug(fileName: string, content: string) {
-  await writeFile(join(process.cwd(), fileName), content);
 }
 
 function splitErrors(
@@ -179,4 +160,12 @@ function findOriginFilePath(
   }
 
   return null;
+}
+
+function uniqErrors(errors: MJMLParseError[]): MJMLParseError[] {
+  return uniqWith(errors, (a, b) => {
+    return (
+      a.line === b.line && a.tagName === b.tagName && a.message === b.message
+    );
+  });
 }
