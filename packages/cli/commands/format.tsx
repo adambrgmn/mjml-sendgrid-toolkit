@@ -3,7 +3,7 @@ import { Box, Text } from 'ink';
 
 interface Props {}
 
-const Dev: React.FC<Props> = ({}) => {
+const Format: React.FC<Props> = () => {
   return (
     <Box>
       <Text>In development</Text>
@@ -11,6 +11,6 @@ const Dev: React.FC<Props> = ({}) => {
   );
 };
 
-Dev.propTypes = {};
+Format.propTypes = {};
 
-export default Dev;
+export default Format;

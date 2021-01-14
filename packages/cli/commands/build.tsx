@@ -3,7 +3,7 @@ import { Box, Text } from 'ink';
 
 interface Props {}
 
-const Build: React.FC<Props> = ({}) => {
+const Build: React.FC<Props> = () => {
   return (
     <Box>
       <Text>In development</Text>

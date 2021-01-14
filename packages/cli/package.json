@@ -1,0 +1,29 @@
+{
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-project",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/adambrgmn/mjml-sendgrid-toolkit.git"
+  },
+  "homepage": "https://github.com/adambrgmn/mjml-sendgrid-toolkit#readme",
+  "license": "MIT",
+  "bin": {
+    "mst": "./build/cli.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "dev": "pastel dev",
+    "build": "pastel build",
+    "lint": "eslint . --ext .ts --ext .tsx --ext .js",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ink": "^3.0.8",
+    "pastel": "^1.1.1",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1"
+  }
+}
