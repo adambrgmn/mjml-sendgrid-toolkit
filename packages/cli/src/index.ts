@@ -6,10 +6,6 @@ import {
 } from '@fransvilhelm/mjml-sendgrid-toolkit-lint';
 import { getProjectConfig } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
-interface LintArgs {
-  files: string[];
-}
-
 yargs(process.argv.slice(2))
   .command(
     'build',
@@ -32,24 +28,8 @@ yargs(process.argv.slice(2))
   .command<LintArgs>(
     'lint <files..>',
     'Lint MJML files',
-    (yargs) => {
-      yargs.positional('files', {
-        describe: 'MJML files to lint',
-        type: 'string',
-      });
-    },
-    async (argv) => {
-      let project = await getProjectConfig(process.cwd());
-      let result = await lint(argv.files, project);
-      let output = await formatLintResult(result);
-
-      if (output.length > 0) {
-        console.log(output);
-        process.exit(1);
-      } else {
-        process.exit(0);
-      }
-    },
+    lintBuilder,
+    lintHandler,
   )
   .command(
     'format',
@@ -57,3 +37,27 @@ yargs(process.argv.slice(2))
     () => {},
     (argv) => console.log('In development'),
   ).argv;
+
+interface LintArgs {
+  files: string[];
+}
+
+function lintBuilder(yargs: yargs.Argv) {
+  yargs.positional('files', {
+    describe: 'MJML files to lint',
+    type: 'string',
+  });
+}
+
+async function lintHandler(argv: yargs.Arguments<LintArgs>) {
+  let project = await getProjectConfig(process.cwd());
+  let result = await lint(argv.files, project);
+  let output = await formatLintResult(result);
+
+  if (output.length > 0) {
+    console.log(output);
+    process.exit(1);
+  } else {
+    process.exit(0);
+  }
+}
