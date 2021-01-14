@@ -23,11 +23,15 @@
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
     "eslint": "^7.17.0",
+    "lodash": "^4.17.20",
     "mjml": "^4.8.1",
-    "mjml-core": "^4.8.1"
+    "mjml-core": "^4.8.1",
+    "mjml-parser-xml": "^4.8.1",
+    "mjml-validator": "^4.8.1"
   },
   "devDependencies": {
     "@types/eslint": "^7.2.6",
+    "@types/lodash": "^4.14.167",
     "@types/mjml": "^4.7.0",
     "@types/mjml-core": "^4.7.0",
     "microbundle": "^0.13.0"

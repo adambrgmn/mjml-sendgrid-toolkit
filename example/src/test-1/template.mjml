@@ -4,7 +4,7 @@
   </mj-head>
   <mj-body>
     <mj-section>
-      <mj-column>
+      <mj-column bg="foo">
         <mj-button>
           Hello world
         </mj-button>
