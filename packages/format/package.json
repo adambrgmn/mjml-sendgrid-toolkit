@@ -1,5 +1,5 @@
 {
-  "name": "@fransvilhelm/mjml-sendgrid-toolkit",
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-format",
   "version": "0.0.0",
   "repository": {
     "type": "git",
@@ -8,11 +8,8 @@
   "homepage": "https://github.com/adambrgmn/mjml-sendgrid-toolkit#readme",
   "license": "MIT",
   "source": "./src/index.ts",
-  "main": "./dist/cli.js",
+  "main": "./dist/format.js",
   "types": "./dist/index.d.ts",
-  "bin": {
-    "mst": "./cli.js"
-  },
   "files": [
     "dist"
   ],
@@ -25,15 +22,9 @@
   },
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
-    "@fransvilhelm/mjml-sendgrid-toolkit-format": "0.0.0",
-    "@fransvilhelm/mjml-sendgrid-toolkit-lint": "0.0.0",
-    "chalk": "^4.1.0",
-    "figures": "^3.2.0",
-    "ora": "^5.2.0",
-    "yargs": "^16.2.0"
+    "prettier": "^2.2.1"
   },
   "devDependencies": {
-    "@types/yargs": "^15.0.12",
-    "microbundle": "^0.13.0"
+    "@types/prettier": "^2.1.6"
   }
 }

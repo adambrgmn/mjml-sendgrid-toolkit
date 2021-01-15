@@ -1,10 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import yargs from 'yargs';
+import ora from 'ora';
 import {
   lint,
   formatLintResult,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-lint';
+import {
+  format,
+  FormatResult,
+} from '@fransvilhelm/mjml-sendgrid-toolkit-format';
 import { getProjectConfig } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+import chalk from 'chalk';
+import figures from 'figures';
 
 yargs(process.argv.slice(2))
   .command(
@@ -31,11 +38,11 @@ yargs(process.argv.slice(2))
     lintBuilder,
     lintHandler,
   )
-  .command(
-    'format',
+  .command<FormatArgs>(
+    'format <files..>',
     'Format MJML templates with prettier',
-    () => {},
-    (argv) => console.log('In development'),
+    formatBuilder,
+    formatHandler,
   ).argv;
 
 interface LintArgs {
@@ -60,4 +67,78 @@ async function lintHandler(argv: yargs.Arguments<LintArgs>) {
   } else {
     process.exit(0);
   }
+}
+
+interface FormatArgs {
+  files: string[];
+}
+
+function formatBuilder(yargs: yargs.Argv) {
+  yargs.positional('files', {
+    describe: 'MJML files to format',
+    type: 'string',
+  });
+}
+
+async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
+  let spinner = ora({ text: 'Formatting files' });
+  spinner.start();
+
+  try {
+    await sleep(3000);
+
+    let project = await getProjectConfig(process.cwd());
+    let result = await format(argv.files, project);
+
+    spinner.succeed('Files formatted\n');
+
+    for (let { filePath, action } of result) {
+      let icon: string;
+      let textColor: chalk.Chalk;
+
+      switch (action) {
+        case 'changed':
+          icon = chalk.green(figures.tick);
+          textColor = chalk.green;
+          break;
+        case 'unchanged':
+          icon = chalk.gray('-');
+          textColor = chalk.white;
+          break;
+        case 'ignored':
+          icon = chalk.yellow('-');
+          textColor = chalk.gray;
+          break;
+        case 'error':
+          icon = chalk.red(figures.cross);
+          textColor = chalk.red;
+      }
+
+      console.log(icon, textColor(project.relative(filePath)));
+    }
+
+    let actions: Record<FormatResult['action'], number> = {
+      changed: result.filter((res) => res.action === 'changed').length,
+      unchanged: result.filter((res) => res.action === 'unchanged').length,
+      ignored: result.filter((res) => res.action === 'ignored').length,
+      error: result.filter((res) => res.action === 'error').length,
+    };
+
+    console.log(`
+Ran formatter over ${result.length} file(s)
+  ${actions.changed} file(s) updated
+  ${actions.unchanged} file(s) untouched
+  ${actions.ignored} file(s) ignored
+  ${actions.error} file(s) errored
+`);
+    process.exit(actions.error > 0 ? 1 : 0);
+  } catch (error) {
+    spinner.fail(error.message);
+    console.error(error);
+    process.exit(1);
+  }
+}
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
 }

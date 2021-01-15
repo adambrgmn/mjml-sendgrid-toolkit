@@ -6,9 +6,7 @@
     <mj-section>
       <mj-column bg="foo">
         <fv-text>Hello world</fv-text>
-        <mj-button>
-          Hello world
-        </mj-button>
+        <mj-button> Hello world </mj-button>
       </mj-column>
     </mj-section>
   </mj-body>

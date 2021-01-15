@@ -106,7 +106,7 @@ async function exists(filePath: string): Promise<boolean> {
   }
 }
 
-async function readJson<T>(filePath: string): Promise<T> {
+export async function readJson<T>(filePath: string): Promise<T> {
   let content = await readFile(filePath, 'utf-8');
   return JSON.parse(content);
 }
