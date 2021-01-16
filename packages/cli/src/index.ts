@@ -85,8 +85,6 @@ async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
   spinner.start();
 
   try {
-    await sleep(3000);
-
     let project = await getProjectConfig(process.cwd());
     let result = await format(argv.files, project);
 
@@ -137,8 +135,4 @@ Ran formatter over ${result.length} file(s)
     console.error(error);
     process.exit(1);
   }
-}
-
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
 }
