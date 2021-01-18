@@ -1,6 +1,6 @@
 module.exports = function injectLang(code, template) {
   return code.replace(
-    '<mjml>',
-    '<mjml><mj-attributes><mj-all lang="sv" /></mj-attributes>',
+    '<mj-head>',
+    `<mj-head><mj-attributes><mj-all lang="${template.language}" /></mj-attributes>`,
   );
 };

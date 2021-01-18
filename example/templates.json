@@ -1,8 +1,14 @@
 {
   "templates": [
     {
-      "name": "test-1",
-      "template": "./src/test-1/template.mjml"
+      "name": "test-sv",
+      "template": "./src/test/template.mjml",
+      "language": "sv"
+    },
+    {
+      "name": "test-en",
+      "template": "./src/test/template.mjml",
+      "language": "en"
     }
   ],
   "preprocessors": ["./scripts/pre-inject-lang.js"]

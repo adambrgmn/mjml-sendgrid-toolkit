@@ -23,7 +23,9 @@ module.exports = class FvText extends BodyComponent {
 
   render() {
     return this.renderMJML(
-      `<mj-text color="red">${this.getContent()}</mj-text>`,
+      `<mj-text color="red">${this.getAttribute(
+        'lang',
+      )} - ${this.getContent()}</mj-text>`,
     );
   }
 };

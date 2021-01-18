@@ -1,0 +1,8 @@
+{
+  "sv": {
+    "greeting": "Hej, {{name}}"
+  },
+  "en": {
+    "greeting": "Hello, {{name}}"
+  }
+}

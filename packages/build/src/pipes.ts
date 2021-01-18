@@ -1,13 +1,17 @@
 import { readFileSync } from 'fs';
 import { basename, dirname, extname, resolve } from 'path';
 import Handlebars from 'handlebars';
+import * as _ from 'lodash';
 import {
   Template,
   ProjectConfig,
   CodeProcessor,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
-export const preprocessors: CodeProcessor[] = [handleHandlebars];
+export const preprocessors: CodeProcessor[] = [
+  compileTranslations,
+  compileHandlebars,
+];
 export const postprocessors: CodeProcessor[] = [removeRawTags];
 
 export function inlineIncludes(
@@ -31,7 +35,7 @@ export function inlineIncludes(
   return includePartials(code, dirname(project.resolve(template.template)));
 }
 
-async function handleHandlebars(
+async function compileHandlebars(
   code: string,
   template: Template,
   project: ProjectConfig,
@@ -43,8 +47,8 @@ async function handleHandlebars(
 
   let context = await project.readConfig<Record<string, any>>(
     [
-      basename(template.template, extname(template.template)) + '.json',
       template.name + '.json',
+      basename(template.template, extname(template.template)) + '.json',
       'data.json',
     ],
     dirname(project.resolve(template.template)),
@@ -56,6 +60,27 @@ async function handleHandlebars(
   }
 
   return code;
+}
+
+async function compileTranslations(
+  code: string,
+  template: Template,
+  project: ProjectConfig,
+): Promise<string> {
+  if (template.language == null) return code;
+
+  let context = await project.readConfig<
+    Record<string, Record<string, string>>
+  >(['translations.json'], dirname(project.resolve(template.template)));
+
+  if (context == null) return code;
+
+  let translations = context.config[template.language] ?? {};
+  let compiled = _.template(code, {
+    sourceURL: project.resolve(template.template),
+  });
+
+  return compiled(translations);
 }
 
 function removeRawTags(code: string): string {

@@ -77,6 +77,7 @@ async function buildHandler(argv: yargs.Arguments<BaseArgs>) {
 
   try {
     let { project } = argv;
+    project.mode = argv.mode ?? 'prod';
     let results = await build(project);
 
     spinner.succeed(`Templates compiled\n`);

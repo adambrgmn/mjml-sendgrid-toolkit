@@ -6,7 +6,7 @@
     <mj-section>
       <mj-column>
         <fv-text>Hello world</fv-text>
-        <mj-button>Hello, {{ name }}!</mj-button>
+        <mj-button>${greeting}!</mj-button>
       </mj-column>
     </mj-section>
   </mj-body>

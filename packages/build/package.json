@@ -23,10 +23,12 @@
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
     "handlebars": "^4.7.6",
+    "lodash": "^4.17.20",
     "mjml": "^4.8.1",
     "mjml-core": "^4.8.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.167",
     "@types/mjml": "^4.7.0",
     "@types/mjml-core": "^4.7.0"
   }

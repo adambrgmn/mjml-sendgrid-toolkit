@@ -10,6 +10,7 @@ export const TemplateSchema = z
   .object({
     name: z.string(),
     template: z.string(),
+    language: z.string().optional(),
   })
   .nonstrict();
 
@@ -121,14 +122,14 @@ export async function getProjectConfig(
   );
 
   let preprocessors = (await Promise.all(
-    (templatesConfig.preprocessors ?? []).map(filePath =>
-      import(projectResolve(filePath)).then(mod => mod.default),
+    (templatesConfig.preprocessors ?? []).map((filePath) =>
+      import(projectResolve(filePath)).then((mod) => mod.default),
     ),
   )) as CodeProcessor[];
 
   let postprocessors = (await Promise.all(
-    (templatesConfig.postprocessors ?? []).map(filePath =>
-      import(projectResolve(filePath)).then(mod => mod.default),
+    (templatesConfig.postprocessors ?? []).map((filePath) =>
+      import(projectResolve(filePath)).then((mod) => mod.default),
     ),
   )) as CodeProcessor[];
 
