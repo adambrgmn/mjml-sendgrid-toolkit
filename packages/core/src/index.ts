@@ -1,4 +1,4 @@
-import { dirname, isAbsolute, relative, resolve } from 'path';
+import { dirname, isAbsolute, join, relative, resolve } from 'path';
 import { constants } from 'fs';
 import { access, readFile } from 'fs/promises';
 import readPkgUp, { NormalizedPackageJson } from 'read-pkg-up';
@@ -52,6 +52,16 @@ export interface ProjectConfig {
    * @param filePath File path to check if it exists
    */
   exists(filePath: string): Promise<boolean>;
+  /**
+   * Read json config from a given directory recursively searching downwards
+   * among the directories, until reaching project root.
+   * @param fileNames File names to look for
+   * @param dir Directory to start looking in
+   */
+  readConfig<T>(
+    fileNames: string[],
+    dir: string,
+  ): Promise<{ config: T; filePath: string } | null>;
 }
 
 /**
@@ -75,16 +85,35 @@ export async function getProjectConfig(
     return exists(isAbsolute(filePath) ? filePath : projectResolve(filePath));
   };
 
-  let mjmlConfigPath: string | null = projectResolve('.mjmlconfig');
+  let projectReadConfig = async <T>(
+    fileNames: string[],
+    dir: string,
+  ): Promise<{ config: T; filePath: string } | null> => {
+    for (let fileName of fileNames) {
+      let filePath = join(dir, fileName);
+      if (await exists(filePath)) {
+        let config = await readJson<T>(filePath);
+        return { config, filePath };
+      }
+    }
+
+    let nextDirectory = dirname(dir);
+    if (nextDirectory.includes(projectRoot)) {
+      return projectReadConfig(fileNames, nextDirectory);
+    }
+
+    return null;
+  };
+
   let mjmlComponents: string[] = [];
 
-  if (await exists(mjmlConfigPath)) {
-    let config = await readJson<{ packages?: string[] }>(mjmlConfigPath);
-    for (let relPath of config.packages ?? []) {
-      mjmlComponents.push(projectResolve(relPath));
-    }
-  } else {
-    mjmlConfigPath = null;
+  let mjml = await projectReadConfig<{ packages?: string[] }>(
+    ['.mjmlconfig'],
+    projectRoot,
+  );
+
+  for (let relPath of mjml?.config.packages ?? []) {
+    mjmlComponents.push(projectResolve(relPath));
   }
 
   const templatesConfig = await TemplateConfigSchema.parseAsync(
@@ -96,6 +125,7 @@ export async function getProjectConfig(
       import(projectResolve(filePath)).then(mod => mod.default),
     ),
   )) as CodeProcessor[];
+
   let postprocessors = (await Promise.all(
     (templatesConfig.postprocessors ?? []).map(filePath =>
       import(projectResolve(filePath)).then(mod => mod.default),
@@ -105,7 +135,7 @@ export async function getProjectConfig(
   return {
     mode,
     root: projectRoot,
-    mjmlConfigPath,
+    mjmlConfigPath: mjml?.filePath ?? null,
     mjmlComponents,
     packageJson: result.packageJson,
     templates: templatesConfig.templates,
@@ -114,6 +144,7 @@ export async function getProjectConfig(
     resolve: projectResolve,
     relative: projectRelative,
     exists: projectExists,
+    readConfig: projectReadConfig,
   };
 }
 

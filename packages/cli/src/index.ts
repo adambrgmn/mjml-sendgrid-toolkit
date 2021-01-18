@@ -6,7 +6,7 @@ import figures from 'figures';
 import prettyBytes from 'pretty-bytes';
 import {
   getProjectConfig,
-  measure,
+  ProjectConfig,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 import {
   lint,
@@ -18,7 +18,12 @@ import {
 } from '@fransvilhelm/mjml-sendgrid-toolkit-format';
 import { build } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
 
-yargs(process.argv.slice(2))
+(yargs(process.argv.slice(2)) as yargs.Argv<BaseArgs>)
+  .middleware(getConfig)
+  .option('mode', {
+    choices: ['dev', 'prod'],
+    description: 'Compile mode',
+  })
   .command(
     'build',
     'Build email templates from MJML source',
@@ -29,13 +34,13 @@ yargs(process.argv.slice(2))
     'dev',
     'Start dev server with live updated templates',
     () => {},
-    argv => console.log('In development'),
+    (argv) => console.log('In development'),
   )
   .command(
     'send',
     'Send test emails through the Sendgrid api',
     () => {},
-    argv => console.log('In development'),
+    (argv) => console.log('In development'),
   )
   .command<LintArgs>(
     'lint <files..>',
@@ -50,15 +55,28 @@ yargs(process.argv.slice(2))
     formatHandler,
   ).argv;
 
-interface BuildArgs {}
+interface BaseArgs {
+  mode?: 'prod' | 'dev';
+  project: ProjectConfig;
+}
 
-function buildBuilder(yargs: yargs.Argv) {}
+async function getConfig(argv: yargs.Arguments<BaseArgs>) {
+  let mode: 'dev' | 'prod' =
+    argv.mode ?? argv._.includes('build') ? 'prod' : 'dev';
 
-async function buildHandler(argv: yargs.Arguments<BuildArgs>) {
+  argv.project = await getProjectConfig(process.cwd(), mode);
+  return argv;
+}
+
+function buildBuilder(yargs: yargs.Argv) {
+  yargs.option('mode', { choices: ['dev', 'prod'], default: 'prod' });
+}
+
+async function buildHandler(argv: yargs.Arguments<BaseArgs>) {
   let spinner = ora('Building templates').start();
 
   try {
-    let project = await getProjectConfig(process.cwd(), 'prod');
+    let { project } = argv;
     let results = await build(project);
 
     spinner.succeed(`Templates compiled\n`);
@@ -81,7 +99,7 @@ async function buildHandler(argv: yargs.Arguments<BuildArgs>) {
   }
 }
 
-interface LintArgs {
+interface LintArgs extends BaseArgs {
   files: string[];
 }
 
@@ -93,8 +111,8 @@ function lintBuilder(yargs: yargs.Argv) {
 }
 
 async function lintHandler(argv: yargs.Arguments<LintArgs>) {
-  let project = await getProjectConfig(process.cwd(), 'dev');
-  let result = await lint(argv.files, project);
+  let { project, files } = argv;
+  let result = await lint(files, project);
   let output = await formatLintResult(result);
 
   if (output.length > 0) {
@@ -105,7 +123,7 @@ async function lintHandler(argv: yargs.Arguments<LintArgs>) {
   }
 }
 
-interface FormatArgs {
+interface FormatArgs extends BaseArgs {
   files: string[];
 }
 
@@ -121,8 +139,8 @@ async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
   spinner.start();
 
   try {
-    let project = await getProjectConfig(process.cwd(), 'dev');
-    let result = await format(argv.files, project);
+    let { project, files } = argv;
+    let result = await format(files, project);
 
     spinner.succeed('Files formatted\n');
 
@@ -152,10 +170,10 @@ async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
     }
 
     let actions: Record<FormatResult['action'], number> = {
-      changed: result.filter(res => res.action === 'changed').length,
-      unchanged: result.filter(res => res.action === 'unchanged').length,
-      ignored: result.filter(res => res.action === 'ignored').length,
-      error: result.filter(res => res.action === 'error').length,
+      changed: result.filter((res) => res.action === 'changed').length,
+      unchanged: result.filter((res) => res.action === 'unchanged').length,
+      ignored: result.filter((res) => res.action === 'ignored').length,
+      error: result.filter((res) => res.action === 'error').length,
     };
 
     console.log(`
