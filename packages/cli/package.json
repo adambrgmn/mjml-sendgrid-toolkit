@@ -24,12 +24,14 @@
     "build": "microbundle --target node"
   },
   "dependencies": {
+    "@fransvilhelm/mjml-sendgrid-toolkit-build": "0.0.0",
     "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
     "@fransvilhelm/mjml-sendgrid-toolkit-format": "0.0.0",
     "@fransvilhelm/mjml-sendgrid-toolkit-lint": "0.0.0",
     "chalk": "^4.1.0",
     "figures": "^3.2.0",
     "ora": "^5.2.0",
+    "pretty-bytes": "^5.5.0",
     "yargs": "^16.2.0"
   },
   "devDependencies": {

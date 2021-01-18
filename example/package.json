@@ -4,6 +4,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "build": "mst build",
+    "lint": "mst lint ./src/**/*.mjml",
+    "format": "mst format ./src/**/*.mjml",
     "mst": "mst"
   },
   "dependencies": {

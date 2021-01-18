@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import yargs from 'yargs';
 import ora from 'ora';
+import chalk from 'chalk';
+import figures from 'figures';
+import prettyBytes from 'pretty-bytes';
+import {
+  getProjectConfig,
+  measure,
+} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 import {
   lint,
   formatLintResult,
@@ -9,28 +16,26 @@ import {
   format,
   FormatResult,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-format';
-import { getProjectConfig } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
-import chalk from 'chalk';
-import figures from 'figures';
+import { build } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
 
 yargs(process.argv.slice(2))
   .command(
     'build',
     'Build email templates from MJML source',
-    () => {},
-    (argv) => console.log('In development'),
+    buildBuilder,
+    buildHandler,
   )
   .command(
     'dev',
     'Start dev server with live updated templates',
     () => {},
-    (argv) => console.log('In development'),
+    argv => console.log('In development'),
   )
   .command(
     'send',
     'Send test emails through the Sendgrid api',
     () => {},
-    (argv) => console.log('In development'),
+    argv => console.log('In development'),
   )
   .command<LintArgs>(
     'lint <files..>',
@@ -44,6 +49,37 @@ yargs(process.argv.slice(2))
     formatBuilder,
     formatHandler,
   ).argv;
+
+interface BuildArgs {}
+
+function buildBuilder(yargs: yargs.Argv) {}
+
+async function buildHandler(argv: yargs.Arguments<BuildArgs>) {
+  let spinner = ora('Building templates').start();
+
+  try {
+    let project = await getProjectConfig(process.cwd());
+    let results = await build(project);
+
+    spinner.succeed(`Templates compiled\n`);
+
+    for (let result of results) {
+      let name = chalk.bold.green(result.name);
+      let src = chalk.blue(project.relative(result.sourcePath));
+      let dist = chalk.blue(project.relative(result.distPath));
+      let size = prettyBytes(result.size);
+      let dur = result.duration.toFixed(2) + ' ms';
+
+      console.log(
+        `${name}: ${src} ${figures.arrowRight} ${dist}
+  ${chalk.gray(`Size: ${size} | Duration: ${dur}`)}\n`,
+      );
+    }
+  } catch (error) {
+    spinner.fail('Failed to build templates');
+    console.error(error);
+  }
+}
 
 interface LintArgs {
   files: string[];
@@ -116,10 +152,10 @@ async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
     }
 
     let actions: Record<FormatResult['action'], number> = {
-      changed: result.filter((res) => res.action === 'changed').length,
-      unchanged: result.filter((res) => res.action === 'unchanged').length,
-      ignored: result.filter((res) => res.action === 'ignored').length,
-      error: result.filter((res) => res.action === 'error').length,
+      changed: result.filter(res => res.action === 'changed').length,
+      unchanged: result.filter(res => res.action === 'unchanged').length,
+      ignored: result.filter(res => res.action === 'ignored').length,
+      error: result.filter(res => res.action === 'error').length,
     };
 
     console.log(`

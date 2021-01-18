@@ -2,14 +2,29 @@ import { dirname, isAbsolute, relative, resolve } from 'path';
 import { constants } from 'fs';
 import { access, readFile } from 'fs/promises';
 import readPkgUp, { NormalizedPackageJson } from 'read-pkg-up';
+import * as z from 'zod';
 import mjml2html from 'mjml';
 import { registerComponent } from 'mjml-core';
 
+export const TemplateSchema = z
+  .object({
+    name: z.string(),
+    template: z.string(),
+  })
+  .nonstrict();
+
+export const TemplateConfigSchema = z.object({
+  templates: z.array(TemplateSchema),
+});
+
+export type Template = z.infer<typeof TemplateSchema>;
+export type TemplateConfig = z.infer<typeof TemplateConfigSchema>;
 export interface ProjectConfig {
-  projectRoot: string;
+  root: string;
   packageJson: NormalizedPackageJson;
   mjmlConfigPath: string | null;
   mjmlComponents: string[];
+  templates: Template[];
   /**
    * Resolve will build a file path relative from the project root.
    * @param filePath Path relative to project root that should be resolve
@@ -42,13 +57,7 @@ export async function getProjectConfig(cwd: string): Promise<ProjectConfig> {
   let projectResolve = (filePath: string) => resolve(projectRoot, filePath);
   let projectRelative = (filePath: string) => relative(projectRoot, filePath);
   let projectExists = async (filePath: string) => {
-    filePath = isAbsolute(filePath) ? filePath : projectResolve(filePath);
-    try {
-      await access(filePath, constants.R_OK);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return exists(isAbsolute(filePath) ? filePath : projectResolve(filePath));
   };
 
   let mjmlConfigPath: string | null = projectResolve('.mjmlconfig');
@@ -63,11 +72,16 @@ export async function getProjectConfig(cwd: string): Promise<ProjectConfig> {
     mjmlConfigPath = null;
   }
 
+  const templatesConfig = await TemplateConfigSchema.parseAsync(
+    await readJson(projectResolve('./templates.json')),
+  );
+
   return {
-    projectRoot,
-    packageJson: result.packageJson,
+    root: projectRoot,
     mjmlConfigPath,
     mjmlComponents,
+    packageJson: result.packageJson,
+    templates: templatesConfig.templates,
     resolve: projectResolve,
     relative: projectRelative,
     exists: projectExists,
@@ -78,7 +92,7 @@ export async function getProjectConfig(cwd: string): Promise<ProjectConfig> {
  * To use custom components in MJML one needs to register them. This is often
  * taken care of for us when using the main export from mjml or mjml-core.
  * But e.g. the lint command uses other ways to get the result.
- * We therefor need to "warm up" the mjml environment by registering all
+ * We therefore need to "warm up" the mjml environment by registering all
  * components and their dependencies.
  *
  * @param project Project data
@@ -106,7 +120,17 @@ async function exists(filePath: string): Promise<boolean> {
   }
 }
 
-export async function readJson<T>(filePath: string): Promise<T> {
+export async function readJson<T = unknown>(filePath: string): Promise<T> {
   let content = await readFile(filePath, 'utf-8');
   return JSON.parse(content);
+}
+
+export async function measure<T>(
+  callback: () => Promise<T>,
+): Promise<[number, T]> {
+  let start = process.hrtime();
+  let result = await callback();
+  let [, nanoseconds] = process.hrtime(start);
+
+  return [nanoseconds / 1000000, result];
 }

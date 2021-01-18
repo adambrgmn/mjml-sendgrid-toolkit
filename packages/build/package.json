@@ -1,5 +1,5 @@
 {
-  "name": "@fransvilhelm/mjml-sendgrid-toolkit-core",
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-build",
   "version": "0.0.0",
   "repository": {
     "type": "git",
@@ -8,7 +8,7 @@
   "homepage": "https://github.com/adambrgmn/mjml-sendgrid-toolkit#readme",
   "license": "MIT",
   "source": "./src/index.ts",
-  "main": "./dist/core.js",
+  "main": "./dist/build.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
@@ -21,14 +21,12 @@
     "build": "microbundle --target node"
   },
   "dependencies": {
+    "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
     "mjml": "^4.8.1",
-    "mjml-core": "^4.8.1",
-    "read-pkg-up": "^7.0.1",
-    "zod": "^1.11.11"
+    "mjml-core": "^4.8.1"
   },
   "devDependencies": {
     "@types/mjml": "^4.7.0",
-    "@types/mjml-core": "^4.7.0",
-    "microbundle": "^0.13.0"
+    "@types/mjml-core": "^4.7.0"
   }
 }

@@ -1,7 +1,7 @@
 ---
 '@fransvilhelm/mjml-sendgrid-toolkit': major
 '@fransvilhelm/mjml-sendgrid-toolkit-core': major
-'@fransvilhelm/mjml-sendgrid-toolkit-format': major
+'@fransvilhelm/mjml-sendgrid-toolkit-build': major
 ---
 
-Add format command
+Add build command
