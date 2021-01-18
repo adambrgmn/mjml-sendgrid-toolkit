@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit-core": "0.0.0",
+    "handlebars": "^4.7.6",
     "mjml": "^4.8.1",
     "mjml-core": "^4.8.1"
   },

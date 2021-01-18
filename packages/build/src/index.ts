@@ -8,6 +8,7 @@ import {
   CodeProcessor,
   Template,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+import { inlineIncludes, preprocessors, postprocessors } from './pipes';
 
 export interface BuildResult {
   name: string;
@@ -53,7 +54,7 @@ export async function buildTemplate(
   let source = await processCode(mjml, {
     template,
     project,
-    pipe: project.preprocessors,
+    pipe: [inlineIncludes, ...project.preprocessors, ...preprocessors],
   });
 
   let { html } = mjml2html(source, {
@@ -67,7 +68,7 @@ export async function buildTemplate(
   return processCode(html, {
     template,
     project,
-    pipe: project.postprocessors,
+    pipe: [...postprocessors, ...project.postprocessors],
   });
 }
 
