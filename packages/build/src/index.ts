@@ -5,6 +5,8 @@ import {
   prepareMjmlEnv,
   measure,
   ProjectConfig,
+  CodeProcessor,
+  Template,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
 export interface BuildResult {
@@ -26,7 +28,7 @@ export async function build(project: ProjectConfig): Promise<BuildResult[]> {
       let distPath = project.resolve(join('dist', `${template.name}.html`));
       let sourcePath = project.resolve(template.template);
 
-      let html = await buildTemplate(sourcePath);
+      let html = await buildTemplate(template, project);
       await writeFile(distPath, html);
 
       return {
@@ -42,10 +44,31 @@ export async function build(project: ProjectConfig): Promise<BuildResult[]> {
   return results;
 }
 
-export async function buildTemplate(sourcePath: string): Promise<string> {
-  let content = await readFile(sourcePath, 'utf-8');
-  let { html } = mjml2html(content, { filePath: sourcePath });
-  return html;
+export async function buildTemplate(
+  template: Template,
+  project: ProjectConfig,
+): Promise<string> {
+  let sourcePath = project.resolve(template.template);
+  let mjml = await readFile(sourcePath, 'utf-8');
+  let source = await processCode(mjml, {
+    template,
+    project,
+    pipe: project.preprocessors,
+  });
+
+  let { html } = mjml2html(source, {
+    filePath: sourcePath,
+    validationLevel: 'strict',
+    ...(project.mjmlConfigPath
+      ? { mjmlConfigPath: project.mjmlConfigPath }
+      : null),
+  });
+
+  return processCode(html, {
+    template,
+    project,
+    pipe: project.postprocessors,
+  });
 }
 
 async function ensureDirectory(
@@ -57,4 +80,21 @@ async function ensureDirectory(
     let fullPath = project.resolve(directoryPath);
     await mkdir(fullPath, { recursive: true });
   }
+}
+
+export interface ProcessCodeOptions {
+  template: Template;
+  project: ProjectConfig;
+  pipe: CodeProcessor[];
+}
+
+async function processCode(
+  code: string,
+  { template, pipe, project }: ProcessCodeOptions,
+): Promise<string> {
+  for (let handler of pipe) {
+    code = await handler(code, template, project);
+  }
+
+  return code;
 }

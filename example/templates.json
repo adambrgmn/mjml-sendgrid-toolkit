@@ -4,5 +4,6 @@
       "name": "test-1",
       "template": "./src/test-1/template.mjml"
     }
-  ]
+  ],
+  "preprocessors": ["./scripts/pre-inject-lang.js"]
 }

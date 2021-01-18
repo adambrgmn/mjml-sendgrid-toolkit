@@ -15,16 +15,28 @@ export const TemplateSchema = z
 
 export const TemplateConfigSchema = z.object({
   templates: z.array(TemplateSchema),
+  preprocessors: z.array(z.string()).optional(),
+  postprocessors: z.array(z.string()).optional(),
 });
 
 export type Template = z.infer<typeof TemplateSchema>;
 export type TemplateConfig = z.infer<typeof TemplateConfigSchema>;
+
+export type CodeProcessor = (
+  source: string,
+  template: Template,
+  project: ProjectConfig,
+) => string | Promise<string>;
+
 export interface ProjectConfig {
+  mode: 'dev' | 'prod';
   root: string;
   packageJson: NormalizedPackageJson;
   mjmlConfigPath: string | null;
   mjmlComponents: string[];
   templates: Template[];
+  preprocessors: CodeProcessor[];
+  postprocessors: CodeProcessor[];
   /**
    * Resolve will build a file path relative from the project root.
    * @param filePath Path relative to project root that should be resolve
@@ -46,7 +58,10 @@ export interface ProjectConfig {
  * Get relevant project data in order to properly execute commands
  * @param cwd Current working directory
  */
-export async function getProjectConfig(cwd: string): Promise<ProjectConfig> {
+export async function getProjectConfig(
+  cwd: string,
+  mode: 'dev' | 'prod',
+): Promise<ProjectConfig> {
   let result = await readPkgUp({ cwd, normalize: true });
 
   if (result == null) {
@@ -76,12 +91,26 @@ export async function getProjectConfig(cwd: string): Promise<ProjectConfig> {
     await readJson(projectResolve('./templates.json')),
   );
 
+  let preprocessors = (await Promise.all(
+    (templatesConfig.preprocessors ?? []).map(filePath =>
+      import(projectResolve(filePath)).then(mod => mod.default),
+    ),
+  )) as CodeProcessor[];
+  let postprocessors = (await Promise.all(
+    (templatesConfig.postprocessors ?? []).map(filePath =>
+      import(projectResolve(filePath)).then(mod => mod.default),
+    ),
+  )) as CodeProcessor[];
+
   return {
+    mode,
     root: projectRoot,
     mjmlConfigPath,
     mjmlComponents,
     packageJson: result.packageJson,
     templates: templatesConfig.templates,
+    preprocessors,
+    postprocessors,
     resolve: projectResolve,
     relative: projectRelative,
     exists: projectExists,

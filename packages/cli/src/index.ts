@@ -58,7 +58,7 @@ async function buildHandler(argv: yargs.Arguments<BuildArgs>) {
   let spinner = ora('Building templates').start();
 
   try {
-    let project = await getProjectConfig(process.cwd());
+    let project = await getProjectConfig(process.cwd(), 'prod');
     let results = await build(project);
 
     spinner.succeed(`Templates compiled\n`);
@@ -93,7 +93,7 @@ function lintBuilder(yargs: yargs.Argv) {
 }
 
 async function lintHandler(argv: yargs.Arguments<LintArgs>) {
-  let project = await getProjectConfig(process.cwd());
+  let project = await getProjectConfig(process.cwd(), 'dev');
   let result = await lint(argv.files, project);
   let output = await formatLintResult(result);
 
@@ -121,7 +121,7 @@ async function formatHandler(argv: yargs.Arguments<FormatArgs>) {
   spinner.start();
 
   try {
-    let project = await getProjectConfig(process.cwd());
+    let project = await getProjectConfig(process.cwd(), 'dev');
     let result = await format(argv.files, project);
 
     spinner.succeed('Files formatted\n');
