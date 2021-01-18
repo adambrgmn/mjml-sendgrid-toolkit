@@ -17,8 +17,6 @@
     "packages/**"
   ],
   "scripts": {
-    "dev": "pastel dev",
-    "build": "pastel build",
     "lint": "eslint . --ext .ts --ext .tsx --ext .js",
     "test": "jest",
     "type-check": "tsc --noEmit",
