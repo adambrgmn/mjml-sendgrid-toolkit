@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "mst build",
+    "dev": "mst dev",
     "lint": "mst lint ./src/**/*.mjml",
     "format": "mst format ./src/**/*.mjml",
     "mst": "mst"

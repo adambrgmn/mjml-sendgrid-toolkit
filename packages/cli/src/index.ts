@@ -17,6 +17,7 @@ import {
   FormatResult,
 } from '@fransvilhelm/mjml-sendgrid-toolkit-format';
 import { build } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
+import { dev } from '@fransvilhelm/mjml-sendgrid-toolkit-dev';
 
 (yargs(process.argv.slice(2)) as yargs.Argv<BaseArgs>)
   .middleware(getConfig)
@@ -33,8 +34,8 @@ import { build } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
   .command(
     'dev',
     'Start dev server with live updated templates',
-    () => {},
-    (argv) => console.log('In development'),
+    devBuilder,
+    devHandler,
   )
   .command(
     'send',
@@ -93,11 +94,26 @@ async function buildHandler(argv: yargs.Arguments<BaseArgs>) {
         `${name}: ${src} ${figures.arrowRight} ${dist}
   ${chalk.gray(`Size: ${size} | Duration: ${dur}`)}\n`,
       );
+
+      process.exit(0);
     }
   } catch (error) {
     spinner.fail('Failed to build templates');
     console.error(error);
+    process.exit(1);
   }
+}
+
+function devBuilder(yargs: yargs.Argv) {
+  yargs.option('mode', { choices: ['dev', 'prod'], default: 'dev' });
+}
+
+async function devHandler(argv: yargs.Arguments<BaseArgs>) {
+  let { project } = argv;
+  project.mode = argv.mode ?? 'prod';
+  let exit = dev(project);
+
+  process.on('exit', () => exit());
 }
 
 interface LintArgs extends BaseArgs {

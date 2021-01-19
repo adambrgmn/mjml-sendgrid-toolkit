@@ -139,7 +139,9 @@ export async function getProjectConfig(
     mjmlConfigPath: mjml?.filePath ?? null,
     mjmlComponents,
     packageJson: result.packageJson,
-    templates: templatesConfig.templates,
+    templates: templatesConfig.templates.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    }),
     preprocessors,
     postprocessors,
     resolve: projectResolve,
@@ -161,6 +163,10 @@ export async function getProjectConfig(
 export async function prepareMjmlEnv(project: ProjectConfig) {
   mjml2html('<mjml><mj-body></mj-body></mjml>');
   for (let componentPath of project.mjmlComponents) {
+    try {
+      delete require.cache[componentPath];
+    } catch (error) {}
+
     try {
       let { default: comp } = await import(componentPath);
       registerComponent(comp);
