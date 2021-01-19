@@ -17,9 +17,10 @@
     "packages/**"
   ],
   "scripts": {
-    "lint": "eslint . --ext .ts --ext .tsx --ext .js",
+    "build": "yarn workspaces run build",
+    "lint": "eslint packages --ext .ts --ext .tsx --ext .js --ignore-pattern dist --ignore-pattern node_modules",
     "test": "jest",
-    "type-check": "tsc --noEmit",
+    "type-check": "yarn workspaces run tsc --noEmit",
     "release": "yarn build && yarn changeset publish"
   },
   "dependencies": {},
