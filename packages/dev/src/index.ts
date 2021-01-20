@@ -22,6 +22,7 @@ export function dev(project: ProjectConfig) {
   server.init({
     server: project.root,
     open: false,
+    ui: false,
     logPrefix: 'mst',
     middleware: [
       {
