@@ -1,2 +1,3 @@
 #!/usr/bin/env node
-require('./dist/cli.js');
+require = require('esm')(module /*, options*/);
+require('./dist/cli.modern.js');

@@ -94,9 +94,9 @@ async function buildHandler(argv: yargs.Arguments<BaseArgs>) {
         `${name}: ${src} ${figures.arrowRight} ${dist}
   ${chalk.gray(`Size: ${size} | Duration: ${dur}`)}\n`,
       );
-
-      process.exit(0);
     }
+
+    process.exit(0);
   } catch (error) {
     spinner.fail('Failed to build templates');
     console.error(error);

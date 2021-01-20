@@ -8,18 +8,20 @@
   "homepage": "https://github.com/adambrgmn/mjml-sendgrid-toolkit#readme",
   "license": "MIT",
   "source": "./src/index.ts",
-  "main": "./dist/dev.js",
+  "main": "./dist/dev.umd.js",
+  "module": "./dist/dev.module.js",
+  "exports": "./dist/dev.modern.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "templates"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "scripts": {
-    "dev": "microbundle watch --target node",
-    "build": "microbundle --target node"
+    "dev": "microbundle watch src/index.ts --target node",
+    "build": "rm -rf dist && microbundle src/index.ts --target node"
   },
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit-build": "0.0.0",

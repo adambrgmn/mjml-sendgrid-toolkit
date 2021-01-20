@@ -10,6 +10,9 @@
     "format": "mst format ./src/**/*.mjml",
     "mst": "mst"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "dependencies": {
     "@fransvilhelm/mjml-sendgrid-toolkit": "0.0.0",
     "mjml-core": "^4.8.1"
