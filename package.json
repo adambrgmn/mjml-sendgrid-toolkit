@@ -25,6 +25,7 @@
   },
   "files": [
     "dist",
+    "templates",
     "cli.js"
   ],
   "scripts": {
