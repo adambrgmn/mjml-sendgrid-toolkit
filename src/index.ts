@@ -12,6 +12,7 @@ import { format, FormatResult } from './format';
 import { build } from './build';
 import { dev } from './dev';
 import { send } from './send';
+import { sync } from './sync';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ dotenv.config();
     sendBuilder,
     sendHandler,
   )
+  .command('sync', 'Sync templates on SendGrid', syncBuilder, syncHandler)
   .command<LintArgs>(
     'lint <files..>',
     'Lint MJML files',
@@ -123,6 +125,35 @@ async function sendHandler(argv: yargs.Arguments<BaseArgs>) {
 
   try {
     await send(argv.project, { defaults });
+    process.exit(0);
+  } catch (error) {
+    process.exit(1);
+  }
+}
+
+interface SyncArgs extends BaseArgs {
+  dryRun: boolean;
+  output: 'pretty' | 'json';
+}
+
+function syncBuilder(yargs: yargs.Argv) {
+  yargs.boolean('dryRun');
+  yargs.option('output', {
+    choices: ['pretty', 'json'],
+    default: 'pretty',
+    description: 'Output mode',
+  });
+}
+
+async function syncHandler(argv: yargs.Arguments<SyncArgs>) {
+  const options = {
+    apiKey: process.env.SENDGRID_API_KEY!,
+    dryRun: argv.dryRun,
+    output: argv.output,
+  };
+
+  try {
+    await sync(argv.project, options);
     process.exit(0);
   } catch (error) {
     process.exit(1);

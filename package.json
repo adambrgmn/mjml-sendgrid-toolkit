@@ -93,11 +93,14 @@
     "typescript": "^4.1.3"
   },
   "peerDependencies": {
-    "eslint": "*",
-    "prettier": "*"
+    "eslint": ">=6",
+    "prettier": ">=1"
   },
   "bugs": {
     "url": "https://github.com/adambrgmn/mjml-sendgrid-toolkit/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "eslintConfig": {
     "extends": [

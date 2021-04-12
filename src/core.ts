@@ -8,9 +8,11 @@ import { registerComponent } from 'mjml-core';
 
 export const TemplateSchema = z
   .object({
+    id: z.string(),
     name: z.string(),
     template: z.string(),
     language: z.string().optional(),
+    subject: z.string().optional(),
   })
   .nonstrict();
 

@@ -21,7 +21,7 @@ interface Answers {
 export async function send(
   project: ProjectConfig,
   options: SendOptions,
-): Promise<any> {
+): Promise<void> {
   let answers = await inquirer.prompt<Answers>([
     {
       type: 'list',
