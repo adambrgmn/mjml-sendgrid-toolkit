@@ -1,5 +1,5 @@
 ---
-'@fransvilhelm/mjml-sendgrid-toolkit': major
+'@fransvilhelm/mjml-sendgrid-toolkit': minor
 ---
 
 Rearrange to skip monorepo structure
