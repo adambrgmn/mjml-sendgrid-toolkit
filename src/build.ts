@@ -7,7 +7,7 @@ import {
   ProjectConfig,
   CodeProcessor,
   Template,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+} from './core';
 import { inlineIncludes, preprocessors, postprocessors } from './pipes';
 
 export interface BuildResult {

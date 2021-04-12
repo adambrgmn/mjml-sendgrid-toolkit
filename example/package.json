@@ -4,17 +4,14 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "mst build",
-    "dev": "mst dev",
-    "lint": "mst lint ./src/**/*.mjml",
-    "format": "mst format ./src/**/*.mjml",
-    "mst": "mst"
+    "build": "../cli.js build",
+    "dev": "../cli.js dev",
+    "lint": "../cli.js lint ./src/**/*.mjml",
+    "format": "../cli.js format ./src/**/*.mjml",
+    "mst": "../cli.js"
   },
   "engines": {
     "node": ">=14"
   },
-  "dependencies": {
-    "@fransvilhelm/mjml-sendgrid-toolkit": "0.0.0",
-    "mjml-core": "^4.8.1"
-  }
+  "dependencies": {}
 }

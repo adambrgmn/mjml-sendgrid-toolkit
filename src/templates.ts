@@ -4,7 +4,7 @@ import { join } from 'path';
 
 export function getHtmlTemplates() {
   const readFile = (name: string) => {
-    return readFileSync(join(__dirname, '../templates', name), 'utf-8');
+    return readFileSync(join(__dirname, './templates', name), 'utf-8');
   };
 
   return {

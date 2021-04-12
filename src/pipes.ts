@@ -1,12 +1,9 @@
 import { readFileSync } from 'fs';
 import { basename, dirname, extname, resolve } from 'path';
 import Handlebars from 'handlebars';
-import * as _ from 'lodash';
-import {
-  Template,
-  ProjectConfig,
-  CodeProcessor,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+import lodash from 'lodash';
+
+import { Template, ProjectConfig, CodeProcessor } from './core';
 
 export const preprocessors: CodeProcessor[] = [
   injectLang,
@@ -50,7 +47,7 @@ async function compileHandlebars(
 ): Promise<string> {
   if (project.mode === 'prod') {
     let re = /\{\{\s*(#|\/|else).*\}\}/g;
-    return code.replace(re, match => `<mj-raw>${match}</mj-raw>`);
+    return code.replace(re, (match) => `<mj-raw>${match}</mj-raw>`);
   }
 
   let context = await project.readConfig<Record<string, any>>(
@@ -84,7 +81,7 @@ async function compileTranslations(
   if (context == null) return code;
 
   let translations = context.config[template.language] ?? {};
-  let compiled = _.template(code, {
+  let compiled = lodash.template(code, {
     sourceURL: project.resolve(template.template),
   });
 

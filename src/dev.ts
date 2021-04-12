@@ -1,11 +1,8 @@
 import bs from 'browser-sync';
 import UrlPattern from 'url-pattern';
-import {
-  getProjectConfig,
-  prepareMjmlEnv,
-  ProjectConfig,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
-import { buildTemplate } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
+
+import { getProjectConfig, prepareMjmlEnv, ProjectConfig } from './core';
+import { buildTemplate } from './build';
 import { getHtmlTemplates } from './templates';
 
 const templatePattern = new UrlPattern('/template/:name');

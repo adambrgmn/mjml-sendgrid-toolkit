@@ -1,10 +1,8 @@
 import { readFile, writeFile } from 'fs/promises';
 import { extname, isAbsolute } from 'path';
 import prettier from 'prettier';
-import {
-  readJson,
-  ProjectConfig,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+
+import { readJson, ProjectConfig } from './core';
 
 export interface FormatResult {
   filePath: string;

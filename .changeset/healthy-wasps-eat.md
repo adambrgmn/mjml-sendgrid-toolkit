@@ -2,4 +2,4 @@
 '@fransvilhelm/mjml-sendgrid-toolkit': major
 ---
 
-Add dev server command
+Rearrange to skip monorepo structure

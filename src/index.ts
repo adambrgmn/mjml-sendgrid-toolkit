@@ -4,20 +4,12 @@ import ora from 'ora';
 import chalk from 'chalk';
 import figures from 'figures';
 import prettyBytes from 'pretty-bytes';
-import {
-  getProjectConfig,
-  ProjectConfig,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
-import {
-  lint,
-  formatLintResult,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-lint';
-import {
-  format,
-  FormatResult,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-format';
-import { build } from '@fransvilhelm/mjml-sendgrid-toolkit-build';
-import { dev } from '@fransvilhelm/mjml-sendgrid-toolkit-dev';
+
+import { getProjectConfig, ProjectConfig } from './core';
+import { lint, formatLintResult } from './lint';
+import { format, FormatResult } from './format';
+import { build } from './build';
+import { dev } from './dev';
 
 (yargs(process.argv.slice(2)) as yargs.Argv<BaseArgs>)
   .middleware(getConfig)

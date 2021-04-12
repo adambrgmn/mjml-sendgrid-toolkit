@@ -10,10 +10,8 @@ import {
 import MJMLParser from 'mjml-parser-xml';
 import MJMLValidator, { dependencies } from 'mjml-validator';
 import { ESLint } from 'eslint';
-import {
-  ProjectConfig,
-  prepareMjmlEnv,
-} from '@fransvilhelm/mjml-sendgrid-toolkit-core';
+
+import { ProjectConfig, prepareMjmlEnv } from './core';
 
 interface LintResult {
   filePath: string;
