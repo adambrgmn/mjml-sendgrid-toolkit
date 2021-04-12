@@ -1,6 +1,6 @@
 {
   "name": "@fransvilhelm/mjml-sendgrid-toolkit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "source": "./src/index.ts",
   "main": "./dist/mjml-sendgrid-toolkit.js",
   "exports": "./dist/mjml-sendgrid-toolkit.modern.js",
