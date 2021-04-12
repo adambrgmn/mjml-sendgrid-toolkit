@@ -1,0 +1,17 @@
+{
+  "name": "@fransvilhelm/mjml-sendgrid-toolkit-example",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "../cli.js build",
+    "dev": "../cli.js dev",
+    "lint": "../cli.js lint ./src/**/*.mjml",
+    "format": "../cli.js format ./src/**/*.mjml",
+    "mst": "../cli.js"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "dependencies": {}
+}

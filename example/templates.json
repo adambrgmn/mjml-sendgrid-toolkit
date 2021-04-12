@@ -1,0 +1,16 @@
+{
+  "templates": [
+    {
+      "id": "d-8cfd87cee57649c39a8b7a9e84ddd8e6",
+      "name": "test",
+      "template": "./src/test/template.mjml",
+      "language": "sv"
+    },
+    {
+      "id": "d-a098231dd3574b2397dea2c032ec4769",
+      "name": "test",
+      "template": "./src/test/template.mjml",
+      "language": "en"
+    }
+  ]
+}
