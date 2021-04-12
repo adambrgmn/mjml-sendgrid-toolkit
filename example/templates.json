@@ -10,6 +10,5 @@
       "template": "./src/test/template.mjml",
       "language": "en"
     }
-  ],
-  "preprocessors": ["./scripts/pre-inject-lang.js"]
+  ]
 }

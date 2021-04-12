@@ -9,6 +9,7 @@ import {
 } from '@fransvilhelm/mjml-sendgrid-toolkit-core';
 
 export const preprocessors: CodeProcessor[] = [
+  injectLang,
   compileTranslations,
   compileHandlebars,
 ];
@@ -35,6 +36,13 @@ export function inlineIncludes(
   return includePartials(code, dirname(project.resolve(template.template)));
 }
 
+function injectLang(code: string, template: Template): string {
+  return code.replace(
+    '<mj-head>',
+    `<mj-head><mj-attributes><mj-all lang="${template.language}" /></mj-attributes>`,
+  );
+}
+
 async function compileHandlebars(
   code: string,
   template: Template,
@@ -42,7 +50,7 @@ async function compileHandlebars(
 ): Promise<string> {
   if (project.mode === 'prod') {
     let re = /\{\{\s*(#|\/|else).*\}\}/g;
-    return code.replace(re, (match) => `<mj-raw>${match}</mj-raw>`);
+    return code.replace(re, match => `<mj-raw>${match}</mj-raw>`);
   }
 
   let context = await project.readConfig<Record<string, any>>(

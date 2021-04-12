@@ -6,7 +6,7 @@
 />
 
 <mj-style>
-  .button {
-    color: red;
+  .button p {
+    color: red !important;
   }
 </mj-style>
