@@ -38,7 +38,7 @@ jobs:
         run: yarn type-check
 
       - name: Test
-        run: yarn test --coverage
+        run: yarn test --passWithNoTests --coverage
 
       - name: Build
         run: yarn build
