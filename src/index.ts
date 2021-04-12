@@ -3,6 +3,7 @@ import yargs from 'yargs';
 import ora from 'ora';
 import chalk from 'chalk';
 import figures from 'figures';
+import dotenv from 'dotenv';
 import prettyBytes from 'pretty-bytes';
 
 import { getProjectConfig, ProjectConfig } from './core';
@@ -10,6 +11,9 @@ import { lint, formatLintResult } from './lint';
 import { format, FormatResult } from './format';
 import { build } from './build';
 import { dev } from './dev';
+import { send } from './send';
+
+dotenv.config();
 
 (yargs(process.argv.slice(2)) as yargs.Argv<BaseArgs>)
   .middleware(getConfig)
@@ -32,8 +36,8 @@ import { dev } from './dev';
   .command(
     'send',
     'Send test emails through the Sendgrid api',
-    () => {},
-    (argv) => console.log('In development'),
+    sendBuilder,
+    sendHandler,
   )
   .command<LintArgs>(
     'lint <files..>',
@@ -106,6 +110,23 @@ async function devHandler(argv: yargs.Arguments<BaseArgs>) {
   let exit = dev(project);
 
   process.on('exit', () => exit());
+}
+
+function sendBuilder(yargs: yargs.Argv) {}
+
+async function sendHandler(argv: yargs.Arguments<BaseArgs>) {
+  const defaults = {
+    to: process.env.SENDGRID_TO_EMAIL,
+    from: process.env.SENDGRID_FROM_EMAIL,
+    apiKey: process.env.SENDGRID_API_KEY,
+  };
+
+  try {
+    await send(argv.project, { defaults });
+    process.exit(0);
+  } catch (error) {
+    process.exit(1);
+  }
 }
 
 interface LintArgs extends BaseArgs {
