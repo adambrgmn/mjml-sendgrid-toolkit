@@ -59,7 +59,7 @@ function createTemplateHandler(
     }
 
     try {
-      await prepareMjmlEnv(project);
+      prepareMjmlEnv(project);
       let code = await buildTemplate(currentTemplate, project);
 
       res.setHeader('Content-Type', 'text/html');

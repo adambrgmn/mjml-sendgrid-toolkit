@@ -62,14 +62,16 @@ export async function sync(
     if (options.output === 'json') {
       console.log(JSON.stringify(updated.map(({ template }) => template)));
     } else {
-      console.log(`Updated ${updated.length} templates(s) on SendGrid`);
+      let verb = options.dryRun ? 'Changes affect' : 'Updated';
+      console.log(`${verb} ${updated.length} templates(s) on SendGrid`);
       for (let template of updated) {
-        console.log(`- Updated ${template.template.name}`);
+        console.log(`- ${template.template.name}`);
       }
     }
   } catch (error) {
     spinner.fail('Failed to sync templates.');
     console.error(error);
+    throw error;
   }
 }
 

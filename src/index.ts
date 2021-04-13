@@ -40,7 +40,12 @@ dotenv.config();
     sendBuilder,
     sendHandler,
   )
-  .command('sync', 'Sync templates on SendGrid', syncBuilder, syncHandler)
+  .command<SyncArgs>(
+    'sync',
+    'Sync templates on SendGrid',
+    syncBuilder,
+    syncHandler,
+  )
   .command<LintArgs>(
     'lint <files..>',
     'Lint MJML files',

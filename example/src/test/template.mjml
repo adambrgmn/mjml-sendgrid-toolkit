@@ -5,7 +5,7 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <fv-text>Hello world</fv-text>
+        <fv-text>Hello world {{name}}</fv-text>
         <mj-button css-class="button">${greeting}!</mj-button>
       </mj-column>
     </mj-section>
