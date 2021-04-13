@@ -92,6 +92,7 @@ export async function send(
   } catch (error) {
     spinner.fail('Failed to send test email.');
     console.error(error);
+    throw error;
   }
 }
 

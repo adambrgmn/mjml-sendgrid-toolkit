@@ -19,7 +19,7 @@ export interface BuildResult {
 }
 
 export async function build(project: ProjectConfig): Promise<BuildResult[]> {
-  await prepareMjmlEnv(project);
+  prepareMjmlEnv(project);
   await ensureDirectory('dist', project);
 
   let results: BuildResult[] = [];

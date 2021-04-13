@@ -162,7 +162,7 @@ export async function getProjectConfig(
  *
  * @param project Project data
  */
-export async function prepareMjmlEnv(project: ProjectConfig) {
+export function prepareMjmlEnv(project: ProjectConfig) {
   mjml2html('<mjml><mj-body></mj-body></mjml>');
   for (let componentPath of project.mjmlComponents) {
     try {
@@ -170,7 +170,7 @@ export async function prepareMjmlEnv(project: ProjectConfig) {
     } catch (error) {}
 
     try {
-      let { default: comp } = await import(componentPath);
+      let comp = require(componentPath);
       registerComponent(comp);
     } catch (error) {
       throw new Error(

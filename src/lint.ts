@@ -22,7 +22,7 @@ export async function lint(
   filePaths: string[],
   project: ProjectConfig,
 ): Promise<LintResult[]> {
-  await prepareMjmlEnv(project);
+  prepareMjmlEnv(project);
 
   let results: Record<string, MJMLParseError[]> = {};
 
